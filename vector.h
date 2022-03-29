@@ -1,5 +1,5 @@
 #pragma once
-#include<string>
+#include<new>
 #include "vec_iterator.h"
 constexpr size_t initial_capacity = 10;
 
