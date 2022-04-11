@@ -11,6 +11,8 @@ private:
 	size_t len = 0, cap;
 
 	void swap(vector&); //copy-swap idiom
+	void swap(vector&&); //copy-swap idiom for move semantics
+
 	void allocate(size_t const, T*); //allocate new memory, copy from the old location
 
 public:
@@ -41,6 +43,14 @@ public:
 
 template<class T>
 inline void vector<T>::swap(vector& rhs)
+{
+	std::swap(len, rhs.len);
+	std::swap(cap, rhs.cap);
+	std::swap(p, rhs.p);
+}
+
+template<class T>
+inline void vector<T>::swap(vector&& rhs)
 {
 	std::swap(len, rhs.len);
 	std::swap(cap, rhs.cap);
