@@ -1,6 +1,5 @@
 #pragma once
 #include<new>
-#include "vec_iterator.h"
 constexpr size_t initial_capacity = 10;
 
 template <class T>
@@ -9,6 +8,7 @@ class vector
 private:
 	T* p = nullptr;
 	size_t len = 0, cap;
+	class iterator;
 
 	void swap(vector&); //copy-swap idiom
 	void swap(vector&&); //copy-swap idiom for move semantics
@@ -32,13 +32,61 @@ public:
 	T& operator[] (size_t const);
 	T const& operator[](size_t const) const;
 
-	vec_iterator<T> begin() const;
-	vec_iterator<T> end() const;
+	iterator begin() const;
+	iterator end() const;
 
 	size_t size() const;
 	size_t capacity() const;
 
 	void reserve(size_t const);
+
+	class iterator
+	{
+	private:
+		T* p = nullptr;
+	public:
+		iterator(T* const ptr) : p(ptr) {}
+		T& operator*() { return *p; }
+		T const& operator*()const { return *p; }
+		T* operator->() { return p; }
+
+		iterator& operator++() //prefix
+		{
+			++p;
+			return *this;
+		}
+		iterator operator++(int) {	return p++;	} //postfix
+		iterator& operator--() //prefix
+		{
+			--p;
+			return *this;
+		}
+		iterator operator--(int) { return p--; } //postfix
+
+		iterator& operator+=(size_t const n)
+		{
+			p += n;
+			return *this;
+		}
+		iterator& operator-=(size_t const n)
+		{
+			p -= n;
+			return *this;
+		}
+
+		iterator operator+ (size_t const n) const { return iterator(p + n); }
+		iterator operator- (size_t const n) const { return iterator(p - n); }
+		size_t operator- (iterator& const i) const { return p - i.p; }
+
+		bool operator== (iterator& const i) { return p == i.p; }
+		bool operator!= (iterator& const i) { return p != i.p; }
+		bool operator> (iterator& const i) { return p > i.p; }
+		bool operator< (iterator& const i) { return p < i.p; }
+		bool operator>= (iterator& const i) { return p >= i.p; }
+		bool operator<= (iterator& const i) { return p <= i.p; }
+	};
+
+
 };
 
 template<class T>
@@ -165,15 +213,15 @@ inline const T& vector<T>::operator[](size_t const index) const
 }
 
 template<class T>
-inline vec_iterator<T> vector<T>::begin() const
+inline vector<T>::iterator vector<T>::begin() const
 {
-	return vec_iterator<T>(p);
+	return iterator(p);
 }
 
 template<class T>
-inline vec_iterator<T> vector<T>::end() const
+inline vector<T>::iterator vector<T>::end() const
 {
-	return vec_iterator<T>(p+len);
+	return iterator(p+len);
 }
 
 template<class T>
